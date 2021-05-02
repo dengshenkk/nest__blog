@@ -1,6 +1,7 @@
 import { BaseEntity } from '@/common/entity/baseEntity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { CategoryEntity } from '@/module/category/entities/category.entity';
+import { TagEntity } from '@/module/tag/entities/tag.entity';
 
 @Entity('t_article')
 export class ArticleEntity extends BaseEntity {
@@ -18,4 +19,8 @@ export class ArticleEntity extends BaseEntity {
 
   @ManyToOne(() => CategoryEntity)
   category: CategoryEntity;
+
+  @ManyToMany(() => TagEntity)
+  @JoinTable()
+  tags: TagEntity[];
 }

@@ -15,7 +15,8 @@ export class TagService {
   }
 
   async init() {
-    await this.tagRepository.save(new CreateTagDto('测试'));
+    const name = await this.findOneByTagName('测试');
+    !name && (await this.tagRepository.save(new CreateTagDto('测试')));
   }
 
   async create(createTagDto: CreateTagDto) {
@@ -26,8 +27,12 @@ export class TagService {
     return `This action returns all tag`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tag`;
+  async findOne(id: string) {
+    return await this.tagRepository.findOne(id);
+  }
+
+  async findByIds(ids: string[]) {
+    return await this.tagRepository.findByIds(ids);
   }
 
   async findOneByTagName(tagName: string) {

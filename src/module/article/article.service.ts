@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleEntity } from '@/module/article/entities/article.entity';
 import { Repository } from 'typeorm';
 import { CategoryService } from '@/module/category/category.service';
+import { TagService } from '@/module/tag/tag.service';
 
 @Injectable()
 export class ArticleService {
@@ -12,13 +13,19 @@ export class ArticleService {
     @InjectRepository(ArticleEntity)
     private readonly articleRepository: Repository<ArticleEntity>,
     private readonly categoryService: CategoryService,
+    private readonly tagService: TagService,
   ) {}
 
   async create(createArticleDto: CreateArticleDto) {
-    const category = this.categoryService.findOne(createArticleDto.categoryId);
-    return this.articleRepository.save(
-      Object.assign(new ArticleEntity(), category),
+    const category = await this.categoryService.findOne(
+      createArticleDto.categoryId,
     );
+    const tags = await this.tagService.findByIds(createArticleDto.tagIds);
+    const article = Object.assign(new ArticleEntity(), createArticleDto);
+    article.category = category;
+    article.tags = tags;
+    console.log('article: ', article);
+    return this.articleRepository.save(article);
   }
 
   async findAll() {

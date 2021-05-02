@@ -4,6 +4,9 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from '@/module/category/entities/category.entity';
 import { Repository } from 'typeorm';
+import { BusinessException } from '@/common/exception/businessException';
+import { ErrorMsg } from '@/common/enums/errorMsg';
+import { ErrorCode } from '@/common/enums/errorCode';
 
 @Injectable()
 export class CategoryService {
@@ -28,8 +31,16 @@ export class CategoryService {
     return await this.categoryRepository.find();
   }
 
-  findOne(id: string) {
-    return this.categoryRepository.findOne(id);
+  async findOne(id: string) {
+    const result = await this.categoryRepository.findOne(id);
+    if (!result) {
+      throw new BusinessException({
+        errorCode: ErrorCode.PARAM_INVALID,
+        errorMessage: ErrorMsg.PARAM_INVALID,
+        description: 'categoryId',
+      });
+    }
+    return result;
   }
 
   async findOneByCategoryName(categoryName: string) {

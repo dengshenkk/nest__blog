@@ -12,5 +12,5 @@ export class CreateArticleDto {
   @ApiProperty()
   categoryId: string;
   @ApiProperty()
-  tagId: string;
+  tagIds: string[];
 }

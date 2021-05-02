@@ -8,6 +8,6 @@ export class CategoryEntity extends BaseEntity {
   name: string;
 
   @OneToMany(() => ArticleEntity, (article) => article.category)
-  @JoinColumn()
+  @JoinColumn({ name: 'id' })
   articles: ArticleEntity[];
 }
