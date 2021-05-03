@@ -33,7 +33,9 @@ export class CategoryController {
   @ApiQuery({ name: 'pageNum', example: 1 })
   @ApiQuery({ name: 'pageSize', example: 20 })
   findAllByPage(@Query('pageSize') pageSize, @Query('pageNum') pageNum) {
-    return this.categoryService.findAllByPage(new Pageable(pageNum, pageSize));
+    return this.categoryService.findAllByPage(
+      new Pageable({ pageNum, pageSize }),
+    );
   }
 
   @Get(':id')

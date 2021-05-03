@@ -4,6 +4,10 @@ import { UpdateTagDto } from './dto/update-tag.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TagEntity } from '@/module/tag/entities/tag.entity';
 import { Repository } from 'typeorm';
+import { Pageable } from '@/common/utils/pageble';
+import { BusinessException } from '@/common/exception/businessException';
+import { ErrorMsg } from '@/common/enums/errorMsg';
+import { ErrorCode } from '@/common/enums/errorCode';
 
 @Injectable()
 export class TagService {
@@ -20,11 +24,37 @@ export class TagService {
   }
 
   async create(createTagDto: CreateTagDto) {
+    const find = await this.findByName(createTagDto.name);
+    if (find) {
+      throw new BusinessException({
+        errorMessage: ErrorMsg.DATA_EXISTS,
+        errorCode: ErrorCode.DATA_EXISTS,
+        description: 'name',
+      });
+    }
     await this.tagRepository.save(createTagDto);
   }
 
-  findAll() {
-    return `This action returns all tag`;
+  async findAll() {
+    return await this.tagRepository.find();
+  }
+
+  async findAllByPage(pageable: Pageable) {
+    const query = this.tagRepository
+      .createQueryBuilder('tag')
+      .skip(pageable.computedCurrentPage())
+      .take(pageable.pageSize);
+    const { data, count } = await pageable.getDataAndCount(query);
+    return {
+      data,
+      count,
+    };
+  }
+
+  async findByName(name: string) {
+    return await this.tagRepository.findOne({
+      name,
+    });
   }
 
   async findOne(id: string) {
@@ -41,11 +71,31 @@ export class TagService {
     });
   }
 
-  update(id: number, updateTagDto: UpdateTagDto) {
-    return `This action updates a #${id} tag`;
+  async update(id: string, updateTagDto: UpdateTagDto) {
+    const one = await this.findOne(id);
+    if (!one) {
+      throw new BusinessException({
+        errorCode: ErrorCode.DATA_NOT_EXISTS,
+        errorMessage: ErrorMsg.DATA_NOT_EXISTS,
+        description: 'id',
+      });
+    }
+    await this.tagRepository.save(Object.assign(one, updateTagDto));
+    return {
+      id,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tag`;
+  async remove(id: string) {
+    const one = await this.findOne(id);
+    if (!one) {
+      throw new BusinessException({
+        errorCode: ErrorCode.DATA_NOT_EXISTS,
+        errorMessage: ErrorMsg.DATA_NOT_EXISTS,
+        description: 'id',
+      });
+    }
+    await this.tagRepository.softRemove(one);
+    return {};
   }
 }

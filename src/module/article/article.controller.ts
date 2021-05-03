@@ -29,7 +29,7 @@ export class ArticleController {
   @ApiQuery({ name: 'pageSize', example: 20 })
   async findAll(@Query('pageNum') pageNum, @Query('pageSize') pageSize) {
     return await this.articleService.findByPage(
-      new Pageable(pageNum, pageSize),
+      new Pageable({ pageNum, pageSize }),
     );
   }
 
