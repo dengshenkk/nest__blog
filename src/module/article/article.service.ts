@@ -33,8 +33,6 @@ export class ArticleService {
   }
 
   async findByPage(pageable: Pageable) {
-    pageable.pageNum = pageable.pageNum - 1;
-
     const queryBuilder = this.articleRepository
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category')
@@ -56,7 +54,15 @@ export class ArticleService {
       .leftJoinAndSelect('article.tags', 'tag')
       .where('article.id = :id', { id });
 
-    return await queryBuilder.getOne();
+    const result = await queryBuilder.getOne();
+    if (!result) {
+      throw new BusinessException({
+        errorMessage: ErrorMsg.DATA_NOT_EXISTS,
+        errorCode: ErrorCode.DATA_NOT_EXISTS,
+        description: 'id',
+      });
+    }
+    return result;
   }
 
   async update(id: string, updateArticleDto: UpdateArticleDto) {

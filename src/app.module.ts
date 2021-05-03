@@ -6,6 +6,7 @@ import { CategoryModule } from './module/category/category.module';
 import { TagModule } from './module/tag/tag.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { CommentModule } from './module/comment/comment.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ConfigModule } from '@nestjs/config';
     ArticleModule,
     CategoryModule,
     TagModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

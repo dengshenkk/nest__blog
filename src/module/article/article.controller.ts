@@ -24,7 +24,7 @@ export class ArticleController {
     return await this.articleService.create(createArticleDto);
   }
 
-  @Get()
+  @Get('/page')
   @ApiQuery({ name: 'pageNum', example: 1 })
   @ApiQuery({ name: 'pageSize', example: 20 })
   async findAll(@Query('pageNum') pageNum, @Query('pageSize') pageSize) {
