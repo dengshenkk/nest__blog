@@ -5,19 +5,30 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import * as dayjs from 'dayjs';
+
+export const transformer = {
+  to(value: any): any {
+    return dayjs(value).valueOf();
+  },
+  from(value: any): any {
+    return dayjs(value).valueOf();
+  },
+};
 
 @Entity()
 export class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ transformer })
   createAt: Date;
 
-  @UpdateDateColumn()
+  // @Timestamp()
+  @UpdateDateColumn({ transformer })
   updateAt: Date;
 
   // 不返回该列
-  @DeleteDateColumn({ select: false })
+  @DeleteDateColumn({ transformer, select: false })
   deleteAt: Date;
 }
