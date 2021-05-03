@@ -68,10 +68,19 @@ export class ArticleService {
         description: 'articleId',
       });
     }
-    // TODO : 太晚了 明天在实现
+    await this.articleRepository.save(Object.assign(one, updateArticleDto));
+    return { id };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} article`;
+  async remove(id: string) {
+    const one = await this.findOne(id);
+    if (!one) {
+      throw new BusinessException({
+        errorCode: ErrorCode.PARAM_INVALID,
+        errorMessage: ErrorMsg.PARAM_INVALID,
+        description: 'id',
+      });
+    }
+    return await this.articleRepository.softRemove(one);
   }
 }

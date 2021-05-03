@@ -18,7 +18,7 @@ export class BusinessException extends HttpException {
   }: {
     errorMessage: string;
     errorCode: number;
-    description: string;
+    description?: string;
     statusCode?: number;
   }) {
     super(errorMessage, statusCode);

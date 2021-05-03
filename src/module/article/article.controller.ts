@@ -11,7 +11,7 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Pageable } from '@/common/utils/pageble';
 
 @ApiTags('文章')
@@ -25,6 +25,8 @@ export class ArticleController {
   }
 
   @Get()
+  @ApiQuery({ name: 'pageNum', example: 1 })
+  @ApiQuery({ name: 'pageSize', example: 20 })
   async findAll(@Query('pageNum') pageNum, @Query('pageSize') pageSize) {
     return await this.articleService.findByPage(
       new Pageable(pageNum, pageSize),
@@ -43,6 +45,6 @@ export class ArticleController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.articleService.remove(+id);
+    return this.articleService.remove(id);
   }
 }
