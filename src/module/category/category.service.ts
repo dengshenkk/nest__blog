@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { BusinessException } from '@/common/exception/businessException';
 import { ErrorMsg } from '@/common/enums/errorMsg';
 import { ErrorCode } from '@/common/enums/errorCode';
+import { Pageable } from '@/common/utils/pageble';
 
 @Injectable()
 export class CategoryService {
@@ -23,12 +24,25 @@ export class CategoryService {
       (await this.categoryRepository.save(new CreateCategoryDto('测试')));
   }
 
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  async create(createCategoryDto: CreateCategoryDto) {
+    return await this.categoryRepository.save(createCategoryDto);
   }
 
   async findAll() {
     return await this.categoryRepository.find();
+  }
+
+  async findAllByPage(pageable: Pageable) {
+    const query = this.categoryRepository
+      .createQueryBuilder('category')
+      .skip(pageable.computedCurrentPage())
+      .take(pageable.pageSize);
+    const data = await query.getMany();
+    const count = await query.getCount();
+    return {
+      data,
+      count,
+    };
   }
 
   async findOne(id: string) {
@@ -49,11 +63,31 @@ export class CategoryService {
     });
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    const one = await this.findOne(id);
+    if (!one) {
+      throw new BusinessException({
+        errorCode: ErrorCode.PARAM_INVALID,
+        errorMessage: ErrorMsg.PARAM_INVALID,
+        description: 'id',
+      });
+    }
+    await this.categoryRepository.save(Object.assign(one, updateCategoryDto));
+    return {
+      id,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: string) {
+    const one = await this.findOne(id);
+    if (!one) {
+      throw new BusinessException({
+        errorMessage: ErrorMsg.PARAM_INVALID,
+        errorCode: ErrorCode.PARAM_INVALID,
+        description: 'id',
+      });
+    }
+    await this.categoryRepository.softRemove(one);
+    return {};
   }
 }

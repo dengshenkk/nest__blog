@@ -17,6 +17,7 @@ export class BaseEntity {
   @UpdateDateColumn()
   updateAt: Date;
 
-  @DeleteDateColumn()
+  // 不返回该列
+  @DeleteDateColumn({ select: false })
   deleteAt: Date;
 }

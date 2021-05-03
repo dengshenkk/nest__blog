@@ -39,7 +39,7 @@ export class ArticleService {
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category')
       .leftJoinAndSelect('article.tags', 'tag')
-      .skip(pageable.pageSize * pageable.pageNum + +pageable.pageNum)
+      .skip(pageable.computedCurrentPage())
       .take(pageable.pageSize);
     const data = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
