@@ -11,8 +11,8 @@ export class HttpExceptionFilter<T> implements ExceptionFilter {
     const { status, errorCode, errorMessage } = exception;
     response.status(status).json({
       success: false,
-      code: errorCode,
-      message: '操作失败: ' + errorMessage,
+      code: errorCode || exception.status,
+      message: '操作失败: ' + (errorMessage || exception.message),
       date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       path: request.url,
       body: Object.keys(request.body).length ? request.body : request.params,

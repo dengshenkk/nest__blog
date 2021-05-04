@@ -10,6 +10,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   const config = new DocumentBuilder()
     .setTitle('Blog API')
+    .addBearerAuth()
     .setDescription('The cats API description')
     .setVersion('1.0')
     .build();

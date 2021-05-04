@@ -8,12 +8,14 @@ import { ErrorMsg } from '@/common/enums/errorMsg';
 import { ErrorCode } from '@/common/enums/errorCode';
 import { encryptPassword } from '@/common/utils/crypto';
 import { UserRegisterDto } from '@/module/user/dto/user-register.dto';
+import { AuthService } from '@/module/auth/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly authService: AuthService,
   ) {
     // this.init();
   }
@@ -54,7 +56,7 @@ export class UserService {
         description: 'email/password',
       });
     }
-    return findUser;
+    return await this.authService.login(findUser);
   }
 
   async register(user: UserRegisterDto) {

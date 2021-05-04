@@ -1,9 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserLoginDto } from '@/module/user/dto/user-login.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { UserEntity } from '@/module/user/entities/user.entity';
-import { UserRegisterDto } from "@/module/user/dto/user-register.dto";
+import { UserRegisterDto } from '@/module/user/dto/user-register.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('用户')
 @Controller('user')
@@ -17,7 +17,14 @@ export class UserController {
   }
 
   @Post('/register')
+  // @UseGuards(AuthGuard('jwt'))
   async register(@Body() user: UserRegisterDto) {
     return await this.userService.register(user);
+  }
+
+  @Post('/userinfo')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserInfo(@Body() user: UserRegisterDto) {
+    return await this.userService.findOne({ email: user.email });
   }
 }
