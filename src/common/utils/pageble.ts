@@ -1,6 +1,11 @@
-/**
- *
- */
+import {
+  IsDefined,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+
 export class Pageable {
   pageNum: number;
   pageSize: number;
@@ -28,4 +33,14 @@ export class Pageable {
     const count = await query.getCount();
     return { data, count };
   }
+}
+
+export class PageDto {
+  @IsString()
+  @IsNotEmpty({ message: 'pageNum不能为空' })
+  pageNum: number;
+  @IsNumber()
+  @IsDefined({ message: '参数必填' })
+  @IsNotEmpty({ message: 'pageSize不能为空' })
+  pageSize: number;
 }

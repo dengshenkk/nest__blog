@@ -7,14 +7,17 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Pageable } from '@/common/utils/pageble';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('分类')
+@UseGuards(AuthGuard('jwt'))
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}

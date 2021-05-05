@@ -7,12 +7,11 @@ export class HttpExceptionFilter<T> implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    console.log(JSON.stringify(exception, null, 4));
     const { status, errorCode, errorMessage } = exception;
-    response.status(status).json({
+    response.status(status || 400).json({
       success: false,
-      code: errorCode || exception.status,
-      message: '操作失败: ' + (errorMessage || exception.message),
+      code: errorCode || exception.status || 500,
+      message: '操作失败: ' + (errorMessage || exception.message || exception),
       date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       path: request.url,
       body: Object.keys(request.body).length ? request.body : request.params,

@@ -7,12 +7,14 @@ import {
   Patch,
   Post,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Pageable } from '@/common/utils/pageble';
+import { ApiTags } from '@nestjs/swagger';
+import { Pageable, PageDto } from '@/common/utils/pageble';
+import { ValidationPipe } from '@/common/validate/validate.pipe';
 
 @ApiTags('文章')
 @Controller('article')
@@ -25,12 +27,10 @@ export class ArticleController {
   }
 
   @Get('/page')
-  @ApiQuery({ name: 'pageNum', example: 1 })
-  @ApiQuery({ name: 'pageSize', example: 20 })
-  async findAll(@Query('pageNum') pageNum, @Query('pageSize') pageSize) {
-    return await this.articleService.findByPage(
-      new Pageable({ pageNum, pageSize }),
-    );
+  @UsePipes(ValidationPipe)
+  async findAll(@Query() pageable: PageDto) {
+    console.log('pageable: ', pageable);
+    return await this.articleService.findByPage(new Pageable(pageable));
   }
 
   @Get(':id')
