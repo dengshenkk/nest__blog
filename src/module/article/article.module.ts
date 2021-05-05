@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArticleEntity } from '@/module/article/entities/article.entity';
 import { CategoryModule } from '@/module/category/category.module';
 import { TagModule } from '@/module/tag/tag.module';
+import { RedisModule } from '@/common/cache/redis/redis.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ArticleEntity]),
     CategoryModule,
     TagModule,
+    RedisModule,
   ],
   controllers: [ArticleController],
   providers: [ArticleService],

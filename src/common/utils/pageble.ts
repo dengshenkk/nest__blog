@@ -16,9 +16,7 @@ export class Pageable {
   }
 
   computedCurrentPage() {
-    const number = this.pageSize * (this.pageNum - 1);
-    console.log('number: ', number);
-    return number;
+    return this.pageSize * (this.pageNum - 1);
   }
 
   /**

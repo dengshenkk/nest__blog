@@ -10,6 +10,7 @@ import { Pageable } from '@/common/utils/pageble';
 import { BusinessException } from '@/common/exception/businessException';
 import { ErrorMsg } from '@/common/enums/errorMsg';
 import { ErrorCode } from '@/common/enums/errorCode';
+import { RedisService } from '@/common/cache/redis/redis.service';
 
 @Injectable()
 export class ArticleService {
@@ -18,6 +19,7 @@ export class ArticleService {
     private readonly articleRepository: Repository<ArticleEntity>,
     private readonly categoryService: CategoryService,
     private readonly tagService: TagService,
+    private readonly redisService: RedisService,
   ) {}
 
   async create(createArticleDto: CreateArticleDto) {
@@ -33,6 +35,12 @@ export class ArticleService {
   }
 
   async findByPage(pageable: Pageable) {
+    const cache = await this.redisService.get(
+      pageable.pageNum + '-' + pageable.pageSize,
+    );
+    if (cache) {
+      return cache;
+    }
     const queryBuilder = this.articleRepository
       .createQueryBuilder('article')
       .leftJoinAndSelect('article.category', 'category')
@@ -41,6 +49,10 @@ export class ArticleService {
       .take(pageable.pageSize);
     const data = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
+    await this.redisService.set(pageable.pageNum + '-' + pageable.pageSize, {
+      data,
+      count,
+    });
     return {
       data,
       count,

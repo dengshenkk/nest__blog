@@ -9,6 +9,7 @@ import { ErrorCode } from '@/common/enums/errorCode';
 import { encryptPassword } from '@/common/utils/crypto';
 import { UserRegisterDto } from '@/module/user/dto/user-register.dto';
 import { AuthService } from '@/module/auth/auth.service';
+import { RedisService } from '@/common/cache/redis/redis.service';
 
 @Injectable()
 export class UserService {
@@ -16,6 +17,7 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly authService: AuthService,
+    private readonly redisService: RedisService,
   ) {
     // this.init();
   }
@@ -56,7 +58,9 @@ export class UserService {
         description: 'email/password',
       });
     }
-    return await this.authService.login(findUser);
+    const token = await this.authService.login(findUser);
+    await this.redisService.set(token.access_token, findUser);
+    return token;
   }
 
   async register(user: UserRegisterDto) {
