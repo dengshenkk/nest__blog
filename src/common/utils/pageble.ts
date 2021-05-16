@@ -1,3 +1,4 @@
+import { ApiProperty, ApiQuery } from '@nestjs/swagger';
 import {
   IsDefined,
   IsNotEmpty,
@@ -38,9 +39,12 @@ export class Pageable {
 export class PageDto {
   @IsString()
   @IsNotEmpty({ message: 'pageNum不能为空' })
+  @ApiProperty({title: '分页', example: 1 })
   pageNum: number;
-  @IsNumber()
+
+
   @IsDefined({ message: '参数必填' })
   @IsNotEmpty({ message: 'pageSize不能为空' })
+  @ApiProperty({title: '页码', example: 20})
   pageSize: number;
 }

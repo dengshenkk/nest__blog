@@ -20,7 +20,7 @@ export class ArticleService {
     private readonly categoryService: CategoryService,
     private readonly tagService: TagService,
     private readonly redisService: RedisService,
-  ) {}
+  ) { }
 
   async create(createArticleDto: CreateArticleDto) {
     const category = await this.categoryService.findOne(
@@ -30,8 +30,8 @@ export class ArticleService {
     const article = Object.assign(new ArticleEntity(), createArticleDto);
     article.category = category;
     article.tags = tags;
-    await this.articleRepository.save(article);
-    return null;
+    const result = await this.articleRepository.save(article);
+    return { id: result.id }
   }
 
   async findByPage(pageable: Pageable) {
@@ -74,7 +74,14 @@ export class ArticleService {
         description: 'id',
       });
     }
+    await this.updateView(result)
     return result;
+  }
+
+  async updateView(article: ArticleEntity) {
+    article.views++
+    const result = await this.articleRepository.save(article)
+    console.log(result);
   }
 
   async update(id: string, updateArticleDto: UpdateArticleDto) {

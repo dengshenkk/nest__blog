@@ -32,7 +32,7 @@ export class TagService {
         description: 'name',
       });
     }
-    await this.tagRepository.save(createTagDto);
+    return await this.tagRepository.save(createTagDto);
   }
 
   async findAll() {

@@ -26,6 +26,9 @@ export class ArticleEntity extends BaseEntity {
   @Column()
   status: string;
 
+  @Column()
+  views: number = 0;
+
   @ManyToOne(() => CategoryEntity)
   category: CategoryEntity;
 
